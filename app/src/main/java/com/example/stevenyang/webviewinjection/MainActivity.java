@@ -1,10 +1,12 @@
 package com.example.stevenyang.webviewinjection;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
@@ -16,12 +18,23 @@ import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
     WebView wv;
+    CountDownTimer countDownTimer = new CountDownTimer(5000,1000) {
+        @Override
+        public void onTick(long l) {
 
+        }
+
+        @Override
+        public void onFinish() {
+        Toast.makeText(getApplicationContext(),"倒數結束",Toast.LENGTH_LONG).show();
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         wv = (WebView) this.findViewById(R.id.wv);
+        wv.setVisibility(View.INVISIBLE);
         wv.getSettings().setJavaScriptEnabled(true);
 
         wv.setWebChromeClient(new WebChromeClient() {
@@ -37,21 +50,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
-
-
-//                wv.loadUrl(
-//                        "javascript:(function() { " +
-//                                "document.getElementsByClassName(\"_khz\")[9].addEventListener(\"click\", function(){alert(\"FUCKYOU！!!!!!!!!!!!!!!!!\");})" +
-//                                "})()");
-
                 wv.loadUrl(
                         "javascript:(function() { " +
                                 "document.getElementsByClassName(\"_15ko\")[0].addEventListener(\"click\", function(){if(document.getElementsByClassName(\"_15ko\")[0]." +
-                                "getAttribute('aria-pressed')==\"true\"){Android.FunctionName('haha');}else{Android.FunctionName('fuckyou');}})" +
+                                "getAttribute('aria-pressed')==\"true\"){Android.FunctionName('文章點讚');}else{Android.FunctionName('取消文章點讚');}})" +
                                 "})()");
+                wv.setVisibility(View.VISIBLE);
+                countDownTimer.start();
 
-
-                Log.e("webview url",wv.getUrl());
+                Log.e("webview url", wv.getUrl());
                 super.onPageFinished(view, url);
             }
 
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         wv.loadUrl("https://www.facebook.com/CocowallApp/photos/a.1118799288162903.1073741828.1108649969177835/1347204571989039/?type=3&theater");
     }
+
     public class WebAppInterface {
         Context mContext;
 
